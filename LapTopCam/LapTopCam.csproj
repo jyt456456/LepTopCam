@@ -19,13 +19,13 @@
 
   <ItemGroup>
     <Reference Include="AutoHotkey.Interop">
-      <HintPath>..\..\DLL\AutoHotkey.Interop.dll</HintPath>
+      <HintPath>..\DLL\AutoHotkey.Interop.dll</HintPath>
     </Reference>
     <Reference Include="Command">
-      <HintPath>..\..\DLL\Command.dll</HintPath>
+      <HintPath>..\DLL\Command.dll</HintPath>
     </Reference>
     <Reference Include="MVbase">
-      <HintPath>..\..\DLL\MVbase.dll</HintPath>
+      <HintPath>..\DLL\MVbase.dll</HintPath>
     </Reference>
   </ItemGroup>
 
