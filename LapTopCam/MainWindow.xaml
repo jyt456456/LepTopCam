@@ -1,0 +1,160 @@
+﻿<Window x:Class="LapTopCam.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LapTopCam"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:command="http://www.galasoft.ch/mvvmlight"
+        mc:Ignorable="d"
+        Title="MainWindow"
+        Height="1080"
+        Width="1920">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <command:EventToCommand Command="{Binding closecommand}"
+                                    PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Window.DataContext>
+        <local:MainViewModel />
+    </Window.DataContext>
+    <!--<i:Interaction.Behaviors>
+        <mouse:MouseBehaviour MouseX="{Binding Mousex, Mode=TwoWay}"
+                              MouseY="{Binding Mousey, Mode=TwoWay}" />
+    </i:Interaction.Behaviors>-->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="120"></RowDefinition>
+            <RowDefinition Height="200"></RowDefinition>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1000" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="300" />
+        </Grid.ColumnDefinitions>
+        <!--<TextBlock Text="{Binding RectX, StringFormat='X={0}'}"/>
+        <TextBlock Text="{Binding RectY, StringFormat='y={0}'}" Margin="0,20,0,0"/>-->
+        <StackPanel Grid.Row="0" Grid.Column="1">
+            <Label Content="카메라 리스트"
+                   HorizontalAlignment="Center"
+                   Height="40" />
+            <ComboBox Height="30"
+                      Width="100"
+                      ItemsSource="{Binding m_cameraNameList}"
+                      SelectedIndex="{Binding Selindex , Mode=TwoWay}">
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="SelectionChanged">
+                        <b:InvokeCommandAction Command="{Binding SelectChange}"
+                                               PassEventArgsToCommand="True" />
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
+            </ComboBox>
+            <Button Command="{Binding btnConnectCommand}"
+                    Content="Connect"
+                    Width="100"
+                    Height="30"
+                    Margin="0,15,0,0"
+                    ></Button>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="1"
+                    Height="200"
+                    VerticalAlignment="Bottom">
+            <Button Command="{Binding btnCommand}"
+                    Content="Shot"
+                    Height="50"
+                    Width="100"
+                    HorizontalAlignment="Center"></Button>
+            <Button Height="50"
+                    Width="100"
+                    Command="{Binding btnSaveCalimgCommand}"
+                    Content="Cal용 이미지 저장"
+                    ></Button>
+            <Button Grid.Row="1"
+                    Grid.Column="1"
+                    Height="30"
+                    Width="100"
+                    Content="Calibrat"
+                    Command="{Binding btnCailCommand}"
+                    ></Button>
+        </StackPanel>
+        <StackPanel Grid.Row="2"
+                    Grid.Column="1">
+            <ComboBox ItemsSource="{Binding m_SafeBoxList}"
+                      Height="30"
+                      Width="100"
+                      HorizontalContentAlignment="Center"
+                      FontSize="30"
+                      SelectedIndex="{Binding Selindex, Mode=TwoWay}">
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="SelectionChanged">
+                        <b:InvokeCommandAction Command="{Binding SelectChange}"
+                                               PassEventArgsToCommand="True" />
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
+            </ComboBox>
+            <Button Height="30"
+                    Width="100"
+                    Content="SetSerachRangs"></Button>
+        </StackPanel>
+       
+        <DockPanel Grid.Row="0"
+                   Grid.Column="0"
+                   Grid.RowSpan="5"
+                   LastChildFill="False">
+            <ItemsControl x:Name="pixelct"
+                          ItemsSource="{Binding m_canvasitems}"
+                          Width="1000"
+                          Height="1000">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Background="Aqua"></Canvas>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type local:RectTile}">
+                        <Rectangle Width="{Binding Rwidth}"
+                                   Height="{Binding Rheight}"
+                                   Fill="{Binding Rgb}"
+                                   Stroke="Black"
+                                   Visibility="{Binding Visib}">
+                            <Rectangle.RenderTransform>
+                                <TranslateTransform X="{Binding Rx}"
+                                                    Y="{Binding Ry}"></TranslateTransform>
+                            </Rectangle.RenderTransform>
+                        </Rectangle>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Image x:Name="Cam1"
+                   Source="{Binding BtCalimage}"
+                   Width="{Binding Width}"
+                   Height="{Binding Height}" />
+        </DockPanel>
+        <StackPanel Grid.Column="2"
+                    Grid.Row="0"
+                    Grid.RowSpan="2">
+            <TextBlock Text="원본이미지" TextAlignment="Center"></TextBlock>
+            <Canvas>
+                <Image x:Name="Cam2"
+                       Source="{Binding Btimage}"
+                       Width="{Binding Width}"
+                       Height="{Binding Height}" />
+            </Canvas>
+        </StackPanel>
+        <StackPanel Grid.Column="2"
+                    Grid.Row="2">
+            <TextBlock Text="Cal 보정 후 이미지"
+                       TextAlignment="Center"></TextBlock>
+            <Canvas>
+                <Image x:Name="Cam3"
+                       Source="{Binding BtCalimage}"
+                       Width="{Binding Width}"
+                       Height="{Binding Height}" />
+            </Canvas>
+        </StackPanel>
+
+    </Grid>
+</Window>

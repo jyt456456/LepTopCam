@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DirectShowLib" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+    <PackageReference Include="MvvmLightLibs" Version="5.4.1.1" />
+    <PackageReference Include="OpenCvSharp4" Version="4.8.0.20230708" />
+    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.8.0.20230708" />
+    <PackageReference Include="OpenCvSharp4.WpfExtensions" Version="4.8.0.20230708" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="AutoHotkey.Interop">
+      <HintPath>..\..\DLL\AutoHotkey.Interop.dll</HintPath>
+    </Reference>
+    <Reference Include="Command">
+      <HintPath>..\..\DLL\Command.dll</HintPath>
+    </Reference>
+    <Reference Include="MVbase">
+      <HintPath>..\..\DLL\MVbase.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="copy &quot;$(ProjectDir)*.ahk&quot; &quot;$(TargetDir)&quot;" />
+  </Target>
+
+</Project>
