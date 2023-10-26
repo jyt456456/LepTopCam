@@ -439,6 +439,9 @@ namespace LapTopCam
 
                 curimg = new Mat();
                 result = new Mat();
+
+                MessageBox.Show("연결완료");
+
             }
             catch
             {
@@ -1030,6 +1033,7 @@ namespace LapTopCam
             //Xml파싱
             private void Xmldeserialize()
         {
+            /*
             string fullpath = Directory.GetCurrentDirectory() + "\\";
             DataConverter.Programs programs = new DataConverter.Programs();
             List<List<DataConverter.Rect>> VsnRect = new List<List<DataConverter.Rect>>();
@@ -1052,8 +1056,29 @@ namespace LapTopCam
                 XmlSerializer xs = new XmlSerializer(typeof(DataConverter.Programs));
                 xs.Serialize(wr, programs);
             }
+            */
 
 
+            
+            string fullpath = Directory.GetCurrentDirectory() + "\\";
+            string path = fullpath + "vsn\\white.vsn";
+            XDocument xmlDoc = XDocument.Load(path);
+            var nodes = xmlDoc.Root.XPathSelectElements("//Programs//Program//Pages//Page//Regions//Region").ToList();
+
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                if (nodes[i].Element("Name").Value.ToString().Equals("문서 창 1"))
+                {
+                    nodes[i].Element("Rect").Element("X").Value = deterectList[maxindex].Xpos.ToString();
+                    string y = nodes[i].Element("Rect").Element("Y").Value = deterectList[maxindex].Ypos.ToString();
+                    string w = nodes[i].Element("Rect").Element("Width").Value = deterectList[maxindex].Rwidth.ToString();
+                    string h = nodes[i].Element("Rect").Element("Height").Value = deterectList[maxindex].Rheight.ToString();
+                }
+
+            }
+
+             xmlDoc.Save(path);
+            
 
 
         }
@@ -1130,7 +1155,7 @@ namespace LapTopCam
                     }
 
 
-                    if (lastcnt >= 50)
+                    if (lastcnt >= 25)
                         break;
                 }
             }

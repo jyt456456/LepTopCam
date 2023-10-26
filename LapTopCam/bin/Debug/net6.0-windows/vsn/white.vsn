@@ -1,25 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Programs xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Programs>
   <Source>LEDVISION</Source>
   <BePacked>0</BePacked>
   <FrameTime>33.333332</FrameTime>
   <Vsnmd5>3EF6009AC3060AE24B6E869450B87B48</Vsnmd5>
   <Program>
-    <Id>cee4fae6-4a19-4d7f-8701-74a4e1ea0f51</Id>
+    <Id>CEE4FAE6-4A19-4D7F-8701-74A4E1EA0F51</Id>
     <Name>LED1</Name>
     <Version>1</Version>
     <Information>
       <Width>323</Width>
       <Height>160</Height>
-      <Duration>6000</Duration>
-      <Description />
-      <Creator />
+      <Duration>6000.000000</Duration>
+      <Description></Description>
+      <Creator></Creator>
       <CreateTime>1601-01-01 00:00:00</CreateTime>
       <LastModifyTime>1601-01-01 00:00:00</LastModifyTime>
     </Information>
     <Pages>
       <Page>
-        <Id>9bfab640-3050-4617-89bb-deec5873a9cd</Id>
+        <Id>9BFAB640-3050-4617-89BB-DEEC5873A9CD</Id>
         <Name>표시 페이지 1</Name>
         <VisibleOrNot>1</VisibleOrNot>
         <Globle>0</Globle>
@@ -29,61 +29,97 @@
         <BgColor>0xFF000000</BgColor>
         <BgFile>
           <IsRelative>0</IsRelative>
-          <FilePath />
+          <FilePath></FilePath>
         </BgFile>
         <BgPicture>
-          <Id>417e1eef-4834-4fb3-b5e9-236b2213e828</Id>
+          <Id>417E1EEF-4834-4FB3-B5E9-236B2213E828</Id>
           <Name>\Back Ground</Name>
           <Type>2</Type>
           <Version>0x00000001</Version>
           <BackColor>0xFF000000</BackColor>
-          <Alhpa>1</Alhpa>
+          <Alhpa>1.000000</Alhpa>
           <Duration>2147483647</Duration>
           <BeGlaring>0</BeGlaring>
           <IsNeedUpdate>0</IsNeedUpdate>
           <UpdateInterval>10000</UpdateInterval>
           <MirrorOrHandstand>0</MirrorOrHandstand>
           <PlayTimes>1</PlayTimes>
+          <effect>
+            <IsStatic>0</IsStatic>
+            <StayType>0</StayType>
+          </effect>
+          <inEffect>
+            <Type>0</Type>
+            <Time>500</Time>
+            <repeatX>1</repeatX>
+            <repeatY>1</repeatY>
+            <IsTran>0</IsTran>
+          </inEffect>
+          <outEffect>
+            <Type>0</Type>
+            <Time>500</Time>
+            <repeatX>1</repeatX>
+            <repeatY>1</repeatY>
+            <IsTran>1</IsTran>
+          </outEffect>
           <Width>0</Width>
           <Height>0</Height>
           <FileSource>
             <IsRelative>0</IsRelative>
-            <FilePath />
+            <FilePath></FilePath>
           </FileSource>
           <ReserveAS>0</ReserveAS>
         </BgPicture>
-        <BgAudios />
+        <BgAudios></BgAudios>
         <Regions>
           <Region>
-            <Id>4bf1f884-9823-4f87-a660-b73528ced422</Id>
+            <Id>4BF1F884-9823-4F87-A660-B73528CED422</Id>
             <Name>문서 창 1</Name>
-            <Type>0</Type>
+            <type>1</type>
             <Show>1</Show>
             <Layer>1</Layer>
             <Locked>0</Locked>
             <IsSameAnim>1</IsSameAnim>
             <Rect>
-              <X>500</X>
-              <Y>0</Y>
-              <Width>500</Width>
-              <Height>100</Height>
+              <X>0</X>
+              <Y>150</Y>
+              <Width>600</Width>
+              <Height>850</Height>
               <BorderWidth>0</BorderWidth>
               <BorderColor>0xFFFFFF00</BorderColor>
             </Rect>
             <Items>
               <Item>
-                <Id>cd918532-c3a4-4b3b-a9de-f9112f0d7546</Id>
+                <Id>CD918532-C3A4-4B3B-A9DE-F9112F0D7546</Id>
                 <Name>white.png</Name>
                 <Type>2</Type>
                 <Version>0x00000001</Version>
                 <BackColor>0xFF000000</BackColor>
-                <Alhpa>1</Alhpa>
+                <Alhpa>1.000000</Alhpa>
                 <Duration>6000</Duration>
                 <BeGlaring>0</BeGlaring>
                 <IsNeedUpdate>0</IsNeedUpdate>
                 <UpdateInterval>10000</UpdateInterval>
                 <MirrorOrHandstand>0</MirrorOrHandstand>
                 <PlayTimes>1</PlayTimes>
+                <effect>
+                  <IsStatic>0</IsStatic>
+                  <StayType>0</StayType>
+                </effect>
+                <inEffect>
+                  <Type>0</Type>
+                  <Time>500</Time>
+                  <repeatX>1</repeatX>
+                  <repeatY>1</repeatY>
+                  <IsTran>0</IsTran>
+                </inEffect>
+                <outEffect>
+                  <Type>0</Type>
+                  <Time>500</Time>
+                  <repeatX>1</repeatX>
+                  <repeatY>1</repeatY>
+                  <IsTran>1</IsTran>
+                </outEffect>
                 <Width>1830</Width>
                 <Height>1330</Height>
                 <FileSource>
