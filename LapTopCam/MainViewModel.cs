@@ -37,10 +37,17 @@ using System.Windows.Shapes;
 using System.Windows.Markup.Localizer;
 using System.Security.Cryptography.X509Certificates;
 using DirectShowLib;
+using System.Xml.Linq;
+using System.Xml.XPath;
+using System.Xml.Serialization;
+using LapTopCam.DataConverter;
+using System.Security.Policy;
 
 namespace LapTopCam
 {
-    public class MainViewModel : INotifyPropertyChanged
+    
+
+    public class MainViewModel : MVbase.MVBase
     {
 
         #region 속성
@@ -48,18 +55,22 @@ namespace LapTopCam
         private double m_width = 300;
         private double m_height = 300;
         private int selindex = 0;
-
+        private int safeselindex = 0;
+        private int selAutoStep = 0;
 
         private bool captured = false;
 
         public ICommand SelectChange { get; set; }
+        public ICommand StepChangeCommand { get; set; }
 
         public ObservableCollection<string> m_cameraNameList { get; set; }
         public ObservableCollection<string> m_SafeBoxList { get; set; }
 
         public ObservableCollection<RectTile> m_canvasitems { get; set; }
+        public ObservableCollection<detectRect> m_canvasdetect { get; set; }
 
-        private List<List<RectTile>> m_Rt;
+        
+        public ObservableCollection<string> m_AutoMecroStep { get; set; }
 
 
         //카메라
@@ -89,11 +100,14 @@ namespace LapTopCam
 
 
         // Mecro
-        private AutoMecro m_AutoMecro;
+        public AutoMecro m_AutoMecro;
+        private List<MecroScirpt.MecroMgr> m_MecroList;
+
 
         //영역 알고리즘
         private System.Windows.Media.Color detectcl;
         private List<detectRect> deterectList;
+        private List<List<RectTile>> m_Rt;
         int xrealstart = 0;
         int yrealstart = 0;
         int xend = 100;
@@ -106,7 +120,12 @@ namespace LapTopCam
         private int realStartPy = 0;
         private bool bnextx = true;
         int nextx = 0;
+
+        private int maxindex = 0;
+
+        private string strmaxindex;
         
+
         public Command.Command btnCommand { get; set; }
 
         public Command.Command btnConnectCommand { get; set; }
@@ -114,6 +133,15 @@ namespace LapTopCam
         public Command.Command btnCailCommand { get; set; }
         public Command.Command btnSaveCalimgCommand { get; set; }
         public Command.Command btnGetFrameCommand { get; set; }
+        
+        public Command.Command btnSafeSelCommand { get; set; }
+        public Command.Command btnSafeBoxCommand { get; set; }
+        public Command.Command btnRunAutoCommand { get; set; }
+        public Command.Command btnStepRunCommand { get; set; }
+
+
+
+
         bool is_start = false;
 
         public string Imgpath { get => m_imgpath; set => m_imgpath = value; }
@@ -126,6 +154,11 @@ namespace LapTopCam
         public double Recwidth { get => recwidth; set => recwidth = value; }
         public double RecHeight { get => recHeight; set => recHeight = value; }
         public int Selindex { get => selindex; set => selindex = value; }
+        public int Safeselindex { get => safeselindex; set => safeselindex = value; }
+        public int SelAutoStep { get => selAutoStep; set => selAutoStep = value; }
+        public int Maxindex { get => maxindex; set => maxindex = value; }
+        public string Strmaxindex { get => strmaxindex; set => strmaxindex = value; }
+
         #endregion
 
 
@@ -138,7 +171,10 @@ namespace LapTopCam
 
             //영역 검색용 초기화
             RectInit();
-
+            
+            //매크로
+            Mecroinit();
+            
         }
 
         
@@ -146,14 +182,17 @@ namespace LapTopCam
         {
 
             m_canvasitems = new ObservableCollection<RectTile>();
-            
+            m_canvasdetect = new ObservableCollection<detectRect>();
+
             m_Rt = new List<List<RectTile>>();
             deterectList = new List<detectRect>();
-            //OpenCvSharp.Rect rect  = new OpenCvSharp.Rect(,);
-            //System.Drawing.Rectangle rt = new System.Drawing.Rectangle();
-
-            //System.Drawing.Color col = System.Drawing.ColorTranslator.FromHtml("#fc1703");
+            m_SafeBoxList = new ObservableCollection<string>();
             SelectChange = new GalaSoft.MvvmLight.Command.RelayCommand<object>(SelChange);
+            btnSafeBoxCommand = new Command.Command(GetSafeBox);
+            btnRunAutoCommand = new Command.Command(RunMecro);
+            
+
+
             SolidColorBrush col = (SolidColorBrush)new BrushConverter().ConvertFrom("#fc1703");
             detectcl = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#03f0fc");
             for (int i=0; i< 100; ++i)
@@ -176,8 +215,8 @@ namespace LapTopCam
                 m_Rt.Add(tile);
 
             }
-
-            for(int h=50; h <70; ++h)
+           
+            for(int h=0; h <15; ++h)
             {
                 for(int i=0; i<50; ++i)
                 {
@@ -186,9 +225,18 @@ namespace LapTopCam
 
                 }
             }
+            
+           /*
+            for (int i = 0; i < 25; ++i)
+            {
+                m_Rt[i][i].Rgb = (SolidColorBrush)new BrushConverter().ConvertFrom("#03f0fc");
+                m_Rt[i][i].Color = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#03f0fc");
+
+            }
+           */
 
 
-            for(int h=10; h<85; ++h)
+            for (int h=10; h<11; ++h)
             {
                 for(int i=60; i<100; ++i)
                 {
@@ -198,7 +246,33 @@ namespace LapTopCam
                 }
 
             }
-            for(int i=0; i<m_Rt.Count; ++i)
+
+            for (int h = 68; h < 70; ++h)
+            {
+                for (int i = 60; i < 100; ++i)
+                {
+
+                    m_Rt[h][i].Rgb = (SolidColorBrush)new BrushConverter().ConvertFrom("#03f0fc");
+                    m_Rt[h][i].Color = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#03f0fc");
+                }
+
+            }
+
+
+            for (int h = 10; h < 70; ++h)
+            {
+                for (int i = 60; i < 65; ++i)
+                {
+
+                    m_Rt[h][i].Rgb = (SolidColorBrush)new BrushConverter().ConvertFrom("#03f0fc");
+                    m_Rt[h][i].Color = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#03f0fc");
+                }
+
+            }
+
+
+
+            for (int i=0; i<m_Rt.Count; ++i)
             {
                 for(int j=0; j < m_Rt[i].Count; ++j)
                 {
@@ -210,6 +284,7 @@ namespace LapTopCam
 
             //m_canvasitems
             OnPropertyChanged("m_canvasitems");
+           
 
 
             GetSafeBox();
@@ -230,6 +305,7 @@ namespace LapTopCam
             closecommand = new Command.Command(Closing);
             btnCailCommand = new Command.Command(CalVer4);
             btnSaveCalimgCommand = new Command.Command(SaveCalimage);
+            
             //btnCailCommand = new Command.Command(ImgSearchMecro);
 
             //  btnGetFrameCommand = new Command.Command(Emtpy);
@@ -249,12 +325,50 @@ namespace LapTopCam
                 OnPropertyChanged("m_cameraNameList");
             }
             
-            //AutoHotKey 연동
-            m_AutoMecro = new AutoMecro();
-            m_AutoMecro.LoadScript("MouseSearchScript");
-            
+
+
+
 
         }
+
+        private void Mecroinit()
+        {
+            //AutoHotKey 연동
+            btnStepRunCommand = new Command.Command(StepRun);
+            m_AutoMecroStep = new ObservableCollection<string>();
+            m_AutoMecro = new AutoMecro();
+            string script = "MouseSearchScript";
+            m_AutoMecro.LoadScript(script);
+            m_MecroList = new List<MecroScirpt.MecroMgr>
+            {
+                
+                new MecroScirpt.OepnClcikScr(), // 0
+                new MecroScirpt.ChessboardSel(),  // 1
+                new MecroScirpt.ImageClick(),  // 2
+                new MecroScirpt.OepnClcikScr(),  // 3
+                new MecroScirpt.WhiteSel(), // 4
+                new MecroScirpt.ImageClick(),  // 5
+                new MecroScirpt.OepnClcikScr(),  // 6
+                new MecroScirpt.ResultSel(),   //7
+                new MecroScirpt.ImageClick()   //8
+                 
+
+            };
+
+
+            
+
+            for(int i=0; i<9; ++i)
+            {
+                m_AutoMecroStep.Add(i.ToString());
+            }
+            
+
+            //     SelectChange = new GalaSoft.MvvmLight.Command.RelayCommand<object>(SelChange);
+
+
+        }
+
         #endregion
 
 
@@ -266,7 +380,6 @@ namespace LapTopCam
             try
             {
                 camDevices = new List<DsDevice>();
-                //GetCameraList();
                 GetListCam();
                 return true;
             }
@@ -274,7 +387,6 @@ namespace LapTopCam
             {
                 return false;
             }
-
 
 
         }
@@ -289,9 +401,6 @@ namespace LapTopCam
         // 노트북WebCam이 1번으로 저장되어 Insert문으로 변경
         private void GetListCam()
         {
-            /*camDevices.InsertRange(0, from DsDevice dsDevice in DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice)
-                                      where !dsDevice.DevicePath.Contains("device:sw")
-                                      select dsDevice);*/
             DsDevice[] ds = DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice);
             for (int i=0; i < DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice).Count(); ++i)
             {
@@ -365,7 +474,7 @@ namespace LapTopCam
 
         private void timer_simpletick(object sender, EventArgs e)
         {
-            // 0번 장비로 생성된 VideoCapture 객체에서 frame을 읽어옴
+            
             Mat img;
             vcam.Read(curimg);
             img = curimg;
@@ -421,17 +530,14 @@ namespace LapTopCam
                     //String FileNameOnly = File.Name.Substring(0, File.Name.Length - 4);
                     images.Add(File.FullName);
 
-                    //MessageBox.Show(FullFileName + " " + FileNameOnly);
+                    
                 }
             }
 
-            //btimage = new WriteableBitmap();
             for(int i=0; i < images.Count; ++i)
             {
                 frame = Cv2.ImRead(images[i]);
-                //btimage = OpenCvSharp.WpfExtensions.WriteableBitmapConverter.ToWriteableBitmap(frame);
-                m_matFrameList.Add(frame);
-                    //  btimage = OpenCvSharp.WpfExtensions.WriteableBitmapConverter.ToWriteableBitmap(frame);
+                m_matFrameList.Add(frame);                    
             }
         }
 
@@ -602,15 +708,6 @@ namespace LapTopCam
         }
 
 
-
-
-
-
-
-
-        
-
-
         //Safe박스 생성
         private void GetSafeBox()
         {
@@ -619,45 +716,72 @@ namespace LapTopCam
             realStartPx = 0;
             realStartPy = 0;
 
-            int recnt = 0;
+            deterectList.Clear();
+            m_canvasdetect.Clear();
+            m_SafeBoxList.Clear();
+
             bool xfind = false;
-            for (searchy = 0; searchy < 99;)
+
+            DateTime dt = DateTime.Now;
+            for (searchy = 0; searchy < 100;)
             {
                 xfind = DetectiveSuccRect(xfind);
                 xend = 100;
                 yend = 100;
                 searchx = 0;
             }
-            
-            
-            
+
+
+            DateTime enddt = DateTime.Now;
+
+            Console.WriteLine(dt.Millisecond.ToString());
+            Console.WriteLine(enddt.Millisecond.ToString());
+
+
 
 
             if (deterectList.Count < 1)
             {
-                //Error 없음
+                //Error? Safe X
             }
             else
             {
 
-
+                double resultrh = 0;
                 for(int i=0; i<deterectList.Count; ++i)
                 {
-                    RectTile rtle = new RectTile();
-                    rtle.Rx = deterectList[i].Xpos * 10;
-                    rtle.Ry = deterectList[i].Ypos * 10;
-                    rtle.Rwidth = (deterectList[i].Endxpos - deterectList[i].Xpos) * 10;
-                    rtle.Rheight = (deterectList[i].Endypos - deterectList[i].Ypos) * 10;
-                    rtle.Rgb = (SolidColorBrush)new BrushConverter().ConvertFrom("#f511a1");
-                    rtle.Checkrect = true;
-                    m_canvasitems.Add(rtle);
+
+        
+                    
+                    deterectList[i].Rwidth= (deterectList[i].Endxpos - deterectList[i].Xpos) * 10;
+                    deterectList[i].Rheight = (deterectList[i].Endypos - deterectList[i].Ypos) * 10;
+                    deterectList[i].Xpos *= 10;
+                    deterectList[i].Ypos *= 10;
+                    deterectList[i].Visib = Visibility.Visible;
+
+                    double maxrh = deterectList[i].Rwidth * deterectList[i].Rheight;
+
+                    if (maxrh > resultrh)
+                    {
+                        resultrh = maxrh;
+                        maxindex = i;
+                    }
+
+                    m_canvasdetect.Add(deterectList[i]);
+                    m_SafeBoxList.Add(i.ToString());
+                  
+                    
+
                 }
-                
+               
+                strmaxindex = maxindex.ToString();
+
+                OnPropertyChanged("m_SafeBoxList");
+                //OnPropertyChanged("Safeselindex");
+                OnPropertyChanged("Strmaxindex");
+              
 
             }
-
-            //
-
 
         }
 
@@ -692,7 +816,7 @@ namespace LapTopCam
              
                             if (searchx == j && i == searchy)
                             {
-                                if(j== 100)
+                                if(j== 99)
                                 {
                                 //찾기실패
                                 ++searchy;
@@ -705,10 +829,6 @@ namespace LapTopCam
                                 continue;
                             }
 
-                        
-
-
-
                         if (i == searchy)
                         {
                             //xend = 파랑색
@@ -719,15 +839,25 @@ namespace LapTopCam
                         }
                         else // 다음줄 파랑색일경우
                         {
+                            for (int k = 0; k < deterectList.Count; ++k)
+                            {
+                                if (deterectList[k].Xpos == searchx && deterectList[k].Endxpos == xend && deterectList[k].Endypos == i)
+                                {
+                                    if (succxend == false)
+                                    {
+                                        ++searchy;
+                                    }
+
+                                    return succxend;
+                                }
+                            }
+
                             resultrect.Xpos = searchx;
-                            resultrect.Ypos = realStartPy;
+                            resultrect.Ypos = setysearch(searchx, xend, searchy);
                             resultrect.Endxpos = xend;
                             resultrect.Endypos = i;
                             deterectList.Add(resultrect);
-                             
-                            //resultrect = new detectRect();
-                            searchy = i;
-                           
+                           // ++searchy;
                             return succxend;
                         }
 
@@ -745,7 +875,6 @@ namespace LapTopCam
 
             }
 
-
             for(int i=0; i< deterectList.Count; ++i)
             {
                 if(deterectList[i].Xpos == searchx && deterectList[i].Endxpos == xend && deterectList[i].Endypos == yend)
@@ -761,7 +890,6 @@ namespace LapTopCam
 
             resultrect.Xpos = searchx;
             resultrect.Ypos = setysearch(searchx, xend, searchy);
-            //resultrect.Ypos = searchy;
             resultrect.Endxpos = xend;
             resultrect.Endypos = yend;
             deterectList.Add(resultrect);
@@ -796,16 +924,12 @@ namespace LapTopCam
             return resulty;
         }
 
-        private void ImgSearchMecro()
-        {
-            m_AutoMecro.RunScript("MouseSearchScript", "ImgSearch");
-        }
 
 
         private void SelChange(object obj)
         {
-            /*
-            if (m_cameraNameList.Count < 1)
+            
+            if (deterectList.Count < 1)
             {
                 return;
             }
@@ -815,43 +939,208 @@ namespace LapTopCam
             if (args == null)
                 return;
 
-            string selecteditem = args.AddedItems[0].ToString();
+            var selecteditem = args.AddedItems[0];
 
-            int curindex = 0;
-            for (int i=0; i<m_cameraNameList.Count; ++i)
+            int curframe = Convert.ToInt32(selecteditem);
+
+            m_canvasdetect.Clear();
+
+            for (int i=0; i< deterectList.Count; ++i)
             {
-                if(m_cameraNameList[i].Equals(selecteditem))
+                if (i == curframe)
                 {
-                    curindex = i;
-                    break;
+                    deterectList[i].Visib = Visibility.Visible;
+                }
+                    
+                else
+                {
+                    deterectList[i].Visib = Visibility.Hidden;
+                }
+                    
+
+
+                m_canvasdetect.Add(deterectList[i]);
+            }
+            
+            OnPropertyChanged("m_canvasdetect");
+            OnPropertyChanged("SelectChange");
+
+        }
+
+        private void StepRun()
+        {
+            Thread.Sleep(200);
+            bool succ = m_MecroList[selAutoStep].AutoRun(ref m_AutoMecro);
+
+            if (succ)
+            {
+                if (selAutoStep == 2)
+                {
+                    //캘리브레이션
+                    //cal = true;
+                }
+
+                if (selAutoStep == 5)
+                {
+
+                    //White 연산
+
+                    //사각형 찾기
+                    GetSafeBox();
+
+                    //vsn 파일 수정
+                    Xmldeserialize();
+
+
+                    //white = true;
+                }
+
+
+
+            }
+        }
+
+
+            /*
+            private void FileMoDefiy()
+            {
+                string fullpath;
+                string line;
+                fullpath = System.Environment.CurrentDirectory + @"\vsn\컬러라이트 프로그램 테스트.vsn";
+                XDocument xmlDoc = XDocument.Load(fullpath);
+                var nodes = xmlDoc.Root.XPathSelectElements("//Programs//Program//Pages//Page//Regions//Region").ToList();
+
+                for (int i = 0; i < nodes.Count; i++)
+                {
+                    if (nodes[i].Element("Name").Value.ToString().Equals("문서 창 1"))
+                    {
+                      string x =  nodes[i].Element("Rect").Element("X").Value;
+                      string y = nodes[i].Element("Rect").Element("Y").Value;
+                      string w = nodes[i].Element("Rect").Element("Width").Value;
+                      string h = nodes[i].Element("Rect").Element("Height").Value;
+                    }
+
+                }
+
+              //  xmlDoc.Save(fullpath);
+
+            }
+            */
+
+            //Xml파싱
+            private void Xmldeserialize()
+        {
+            string fullpath = Directory.GetCurrentDirectory() + "\\";
+            DataConverter.Programs programs = new DataConverter.Programs();
+            List<List<DataConverter.Rect>> VsnRect = new List<List<DataConverter.Rect>>();
+            string path = fullpath + "vsn\\white.vsn";
+            //읽기
+            
+            using (var sr = new StreamReader(path))
+            {
+                var xs = new XmlSerializer(typeof(DataConverter.Programs));
+                programs = (DataConverter.Programs)xs.Deserialize(sr);
+                
+            }
+            
+            programs.SetRect(deterectList[maxindex].Xpos, deterectList[maxindex].Ypos, deterectList[maxindex].Rwidth, deterectList[maxindex].Rheight) ;
+
+
+            //쓰기
+            using (StreamWriter wr = new StreamWriter(path))
+            {
+                XmlSerializer xs = new XmlSerializer(typeof(DataConverter.Programs));
+                xs.Serialize(wr, programs);
+            }
+
+
+
+
+        }
+
+
+        private void RunMecro()
+        {
+            bool succ = false;
+            bool cal = false;
+            bool white = false;
+            int failcnt = 0;
+            int lastlevel = 0;
+            int lastcnt = 0;            
+            
+            for(int i=0; i< m_MecroList.Count;)
+            {
+                Thread.Sleep(200);
+                succ =  m_MecroList[i].AutoRun(ref m_AutoMecro);
+              
+                if(succ)
+                {
+                    if(i == 2 && cal == false)
+                    {
+                        //캘리브레이션
+                        cal = true;
+
+                    }
+
+                    if(i == 5 && white == false)
+                    {
+
+                        //White 연산
+
+                        //사각형 찾기
+                        GetSafeBox();
+
+                        //vsn 파일 수정
+                        Xmldeserialize();
+
+
+                        white = true;
+                    }
+
+
+
+                    
+                    ++i;
+                    lastlevel = i;
+                    lastcnt = 0;
+                }
+                else
+                { // 매크로 꼬임 방지
+                    ++failcnt;
+                    ++lastcnt;
+                    if (lastlevel == 0)
+                    {
+
+                        if (failcnt >= 3)
+                            break;
+
+
+                       
+                        continue;
+                    }
+
+                    if(failcnt >= 3 && lastlevel <= i)
+                    {
+                        failcnt = 0;
+                        --i;
+                    }
+                    else if(failcnt >=3 && lastlevel > i)
+                    {
+                        ++i;
+                    }
+
+
+                    if (lastcnt >= 50)
+                        break;
                 }
             }
             
-            //args.
-            //graph 변경
-            //int curframe = Convert.ToInt32(selecteditem);
-            OnPropertyChanged("SelectChange");
-            */
+
+
+
 
         }
 
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            VerifyPropertyName(propertyName);
-            var handler = PropertyChanged;
-            handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        [Conditional("DEBUG")]
-        private void VerifyPropertyName(string propertyName)
-        {
-            if (TypeDescriptor.GetProperties(this)[propertyName] == null)
-                throw new ArgumentNullException(GetType().Name + " does not contain property: " + propertyName);
-        }
 
 
         #endregion

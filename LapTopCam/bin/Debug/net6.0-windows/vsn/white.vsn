@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Programs xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Source>LEDVISION</Source>
+  <BePacked>0</BePacked>
+  <FrameTime>33.333332</FrameTime>
+  <Vsnmd5>3EF6009AC3060AE24B6E869450B87B48</Vsnmd5>
+  <Program>
+    <Id>cee4fae6-4a19-4d7f-8701-74a4e1ea0f51</Id>
+    <Name>LED1</Name>
+    <Version>1</Version>
+    <Information>
+      <Width>323</Width>
+      <Height>160</Height>
+      <Duration>6000</Duration>
+      <Description />
+      <Creator />
+      <CreateTime>1601-01-01 00:00:00</CreateTime>
+      <LastModifyTime>1601-01-01 00:00:00</LastModifyTime>
+    </Information>
+    <Pages>
+      <Page>
+        <Id>9bfab640-3050-4617-89bb-deec5873a9cd</Id>
+        <Name>표시 페이지 1</Name>
+        <VisibleOrNot>1</VisibleOrNot>
+        <Globle>0</Globle>
+        <AppointDuration>3600000</AppointDuration>
+        <PlayOneTime>6000</PlayOneTime>
+        <LoopType>1</LoopType>
+        <BgColor>0xFF000000</BgColor>
+        <BgFile>
+          <IsRelative>0</IsRelative>
+          <FilePath />
+        </BgFile>
+        <BgPicture>
+          <Id>417e1eef-4834-4fb3-b5e9-236b2213e828</Id>
+          <Name>\Back Ground</Name>
+          <Type>2</Type>
+          <Version>0x00000001</Version>
+          <BackColor>0xFF000000</BackColor>
+          <Alhpa>1</Alhpa>
+          <Duration>2147483647</Duration>
+          <BeGlaring>0</BeGlaring>
+          <IsNeedUpdate>0</IsNeedUpdate>
+          <UpdateInterval>10000</UpdateInterval>
+          <MirrorOrHandstand>0</MirrorOrHandstand>
+          <PlayTimes>1</PlayTimes>
+          <Width>0</Width>
+          <Height>0</Height>
+          <FileSource>
+            <IsRelative>0</IsRelative>
+            <FilePath />
+          </FileSource>
+          <ReserveAS>0</ReserveAS>
+        </BgPicture>
+        <BgAudios />
+        <Regions>
+          <Region>
+            <Id>4bf1f884-9823-4f87-a660-b73528ced422</Id>
+            <Name>문서 창 1</Name>
+            <Type>0</Type>
+            <Show>1</Show>
+            <Layer>1</Layer>
+            <Locked>0</Locked>
+            <IsSameAnim>1</IsSameAnim>
+            <Rect>
+              <X>500</X>
+              <Y>0</Y>
+              <Width>500</Width>
+              <Height>100</Height>
+              <BorderWidth>0</BorderWidth>
+              <BorderColor>0xFFFFFF00</BorderColor>
+            </Rect>
+            <Items>
+              <Item>
+                <Id>cd918532-c3a4-4b3b-a9de-f9112f0d7546</Id>
+                <Name>white.png</Name>
+                <Type>2</Type>
+                <Version>0x00000001</Version>
+                <BackColor>0xFF000000</BackColor>
+                <Alhpa>1</Alhpa>
+                <Duration>6000</Duration>
+                <BeGlaring>0</BeGlaring>
+                <IsNeedUpdate>0</IsNeedUpdate>
+                <UpdateInterval>10000</UpdateInterval>
+                <MirrorOrHandstand>0</MirrorOrHandstand>
+                <PlayTimes>1</PlayTimes>
+                <Width>1830</Width>
+                <Height>1330</Height>
+                <FileSource>
+                  <IsRelative>0</IsRelative>
+                  <FilePath>C:\Users\taeya\OneDrive\바탕 화면\file\project\LapTopCam\vsn\white.png</FilePath>
+                </FileSource>
+                <ReserveAS>0</ReserveAS>
+              </Item>
+            </Items>
+          </Region>
+        </Regions>
+      </Page>
+    </Pages>
+  </Program>
+</Programs>

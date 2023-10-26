@@ -53,27 +53,37 @@ MouseGet()
 }
 
 
-ImgSearch()
+ImgSearch(fullpath)
 {
 	CoordMode, Pixel, Screen
 	CoordMode, Mouse, Screen
 
-	ImageSearch, FoundX, FoundY, 0, 0, 2000, 2000, D:\mecro\load.png
-	if(ErrorLevel =2)
-		MsgBox 검색실행불가
-	else if (ErrorLevel = 1)
-		ImageSearch, FoundX, FoundY, 0, 0, 2000, 2000, D:\mecro\load2.png
+	ImageSearch, FoundX, FoundY, 0, 0, 2000, 2000, %fullpath%
+	if(ErrorLevel = 2)
+		{
+			MsgBox 실행에러
+			return ErrorLevel
+		}
+		
+	else if(ErrorLevel = 1)
+		{
+			MsgBox 이미지못찾음
+			return ErrorLevel
+		}
+		
 	else
 		real := 10
 		realx := FoundX + real
 		realy := FoundY + real
 		MouseMove, %realx%, %realy%
 		MouseClick, left, %realx%, %realy%
-		Sleep, 600
-		ImageSearch, FoundX, FoundY, 0,0, 2000, 2000, D:\mecro\filename.png
-		MouseClick, left, %FoundX%, %FoundY%
-		MouseClick, left, %FoundX%, %FoundY%
 
 }
 
+doubleClick()
+{
+	MouseClick, left
+
+	MouseClick, left
+}
 	

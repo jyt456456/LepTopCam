@@ -14,13 +14,16 @@ namespace LapTopCam
 
         public AutoHotkeyEngine ahk;
 
-
-
         public AutoMecro()
+            {
+            ahk = AutoHotkeyEngine.Instance;
+            }
+            
+
+        public void InitAuto()
         {
             ahk = AutoHotkeyEngine.Instance;
         }
-
         
         public void LoadScript(string _script)
         {
@@ -72,6 +75,31 @@ namespace LapTopCam
         }
 
 
+        public int SearchImg(string _fullpath)
+        {
+            var result = ahk.ExecFunction("ImgSearch", _fullpath);
+            if (result != null)
+            {
+                if (result.Length != 0)
+                {
+                    try
+                    {
+                        return Convert.ToInt32(result);
+                    }
+                    catch
+                    {
+
+                    }
+                }
+
+
+            }
+            return -1;
+
+        }
+
+
+
         public string RunPixelSearh(string _outx, string _outy)
         {
            return ahk.ExecFunction("RunSearch", _outx, _outy);
@@ -88,6 +116,18 @@ namespace LapTopCam
         public string GetVal(string _target)
         {
             return ahk.GetVar(_target);
+        }
+
+
+        public void DoubleClick()
+        {
+            ahk.ExecFunction("doubleClick");
+        }
+
+        public void Close()
+        {
+            ahk.Reset();
+          //  ahk = null;
         }
 
     }

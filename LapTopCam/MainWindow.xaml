@@ -45,12 +45,6 @@
                       Width="100"
                       ItemsSource="{Binding m_cameraNameList}"
                       SelectedIndex="{Binding Selindex , Mode=TwoWay}">
-                <b:Interaction.Triggers>
-                    <b:EventTrigger EventName="SelectionChanged">
-                        <b:InvokeCommandAction Command="{Binding SelectChange}"
-                                               PassEventArgsToCommand="True" />
-                    </b:EventTrigger>
-                </b:Interaction.Triggers>
             </ComboBox>
             <Button Command="{Binding btnConnectCommand}"
                     Content="Connect"
@@ -82,12 +76,15 @@
         </StackPanel>
         <StackPanel Grid.Row="2"
                     Grid.Column="1">
+            <Label Content="추출한 회피영역 목록"
+                   HorizontalContentAlignment="Center"
+                   > </Label>
             <ComboBox ItemsSource="{Binding m_SafeBoxList}"
-                      Height="30"
+                      Height="50"
                       Width="100"
                       HorizontalContentAlignment="Center"
                       FontSize="30"
-                      SelectedIndex="{Binding Selindex, Mode=TwoWay}">
+                      SelectedIndex="{Binding Safeselindex, Mode=TwoWay}">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="SelectionChanged">
                         <b:InvokeCommandAction Command="{Binding SelectChange}"
@@ -97,9 +94,68 @@
             </ComboBox>
             <Button Height="30"
                     Width="100"
-                    Content="SetSerachRangs"></Button>
+                    Content="SafeBoxGet"
+                    Margin="0,20,0,0"
+                    Command="{Binding btnSafeBoxCommand}"
+                    ></Button>
+            <Button Height="30"
+                    Width="100"
+                    Content="RunAuto"
+                    Margin="0,20,0,0"
+                    Command="{Binding btnRunAutoCommand}"></Button>
+            <Label Content="AUTO 단계"
+                   HorizontalContentAlignment="Center">               
+            </Label>
+            <ComboBox ItemsSource="{Binding m_AutoMecroStep}"
+                      Height="50"
+                      Width="100"
+                      HorizontalContentAlignment="Center"
+                      FontSize="30"
+                      SelectedIndex="{Binding SelAutoStep, Mode=TwoWay}">
+                
+            </ComboBox>
+            <Button Height="30"
+                    Width="100"
+                    Content="StepRun"
+                    Margin="0,20,0,0"
+                    Command="{Binding btnStepRunCommand}"></Button>
+            <Label Content="현재 최대크기 회피영역 번호"
+                   HorizontalContentAlignment="Center"
+                   Margin="0,20,0,0"></Label>
+            <Label x:Name="max"
+                Content="{Binding Path=Strmaxindex, Mode=TwoWay}"
+                   HorizontalContentAlignment="Center"
+                   Margin="0,20,0,0" />
         </StackPanel>
-       
+        <ItemsControl x:Name="resultpan"
+                      ItemsSource="{Binding m_canvasdetect}"
+                      Width="1000"
+                      Height="1000"
+                      Panel.ZIndex="1"
+                      Grid.Row="0"
+                      Grid.Column="0"
+                      Grid.RowSpan="5"
+                      Margin="0">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas Background="Transparent"></Canvas>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type local:detectRect}">
+                    <Rectangle Width="{Binding Rwidth}"
+                               Height="{Binding Rheight}"
+                               Fill="#f511a1"
+                               Stroke="Black"
+                               Visibility="{Binding Visib}">
+                        <Rectangle.RenderTransform>
+                            <TranslateTransform X="{Binding Xpos}"
+                                                Y="{Binding Ypos}"></TranslateTransform>
+                        </Rectangle.RenderTransform>
+                    </Rectangle>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
         <DockPanel Grid.Row="0"
                    Grid.Column="0"
                    Grid.RowSpan="5"
@@ -107,7 +163,9 @@
             <ItemsControl x:Name="pixelct"
                           ItemsSource="{Binding m_canvasitems}"
                           Width="1000"
-                          Height="1000">
+                          Height="1000"
+                          Panel.ZIndex="3"
+                          Margin="0">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <Canvas Background="Aqua"></Canvas>
@@ -118,8 +176,7 @@
                         <Rectangle Width="{Binding Rwidth}"
                                    Height="{Binding Rheight}"
                                    Fill="{Binding Rgb}"
-                                   Stroke="Black"
-                                   Visibility="{Binding Visib}">
+                                   Stroke="Black">
                             <Rectangle.RenderTransform>
                                 <TranslateTransform X="{Binding Rx}"
                                                     Y="{Binding Ry}"></TranslateTransform>
@@ -128,10 +185,6 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            <Image x:Name="Cam1"
-                   Source="{Binding BtCalimage}"
-                   Width="{Binding Width}"
-                   Height="{Binding Height}" />
         </DockPanel>
         <StackPanel Grid.Column="2"
                     Grid.Row="0"
@@ -155,6 +208,5 @@
                        Height="{Binding Height}" />
             </Canvas>
         </StackPanel>
-
     </Grid>
 </Window>
