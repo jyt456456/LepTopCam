@@ -7661,11 +7661,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\taeya\\OneDrive\\바탕 화면\\file\\project\\LapTopCam\\LapTopCam\\LapTopCam.csproj",
+      "projectUniqueName": "C:\\Users\\taeya\\LepTopCam\\LapTopCam\\LapTopCam.csproj",
       "projectName": "LapTopCam",
-      "projectPath": "C:\\Users\\taeya\\OneDrive\\바탕 화면\\file\\project\\LapTopCam\\LapTopCam\\LapTopCam.csproj",
+      "projectPath": "C:\\Users\\taeya\\LepTopCam\\LapTopCam\\LapTopCam.csproj",
       "packagesPath": "C:\\Users\\taeya\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\taeya\\OneDrive\\바탕 화면\\file\\project\\LapTopCam\\LapTopCam\\obj\\",
+      "outputPath": "C:\\Users\\taeya\\LepTopCam\\LapTopCam\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -7680,7 +7680,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "D:\\project\\UnisA\\UniEye6.Shared": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -7743,7 +7742,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
       }
     }
   },

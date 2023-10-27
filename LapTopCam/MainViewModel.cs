@@ -120,7 +120,10 @@ namespace LapTopCam
         private int realStartPy = 0;
         private bool bnextx = true;
         int nextx = 0;
-
+        private bool topyblue = false;
+        private int topybluestart = 0;
+        private int topxend = 0;
+        
         private int maxindex = 0;
 
         private string strmaxindex;
@@ -216,9 +219,9 @@ namespace LapTopCam
 
             }
            
-            for(int h=0; h <15; ++h)
+            for(int h=80; h <95; ++h)
             {
-                for(int i=0; i<50; ++i)
+                for(int i=0; i<25; ++i)
                 {
                     m_Rt[h][i].Rgb = (SolidColorBrush)new BrushConverter().ConvertFrom("#03f0fc");
                     m_Rt[h][i].Color = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#03f0fc");
@@ -236,9 +239,9 @@ namespace LapTopCam
            */
 
 
-            for (int h=10; h<11; ++h)
+            for (int h=10; h<20; ++h)
             {
-                for(int i=60; i<100; ++i)
+                for(int i=80; i<100; ++i)
                 {
 
                     m_Rt[h][i].Rgb = (SolidColorBrush)new BrushConverter().ConvertFrom("#03f0fc");
@@ -246,7 +249,7 @@ namespace LapTopCam
                 }
 
             }
-
+            /*
             for (int h = 68; h < 70; ++h)
             {
                 for (int i = 60; i < 100; ++i)
@@ -269,7 +272,7 @@ namespace LapTopCam
                 }
 
             }
-
+            */
 
 
             for (int i=0; i<m_Rt.Count; ++i)
@@ -729,9 +732,14 @@ namespace LapTopCam
             for (searchy = 0; searchy < 100;)
             {
                 xfind = DetectiveSuccRect(xfind);
-                xend = 100;
-                yend = 100;
-                searchx = 0;
+
+
+                    xend = 100;
+                    yend = 100;
+                    searchx = 0;
+                    topybluestart = 0;
+                
+                
             }
 
 
@@ -806,6 +814,9 @@ namespace LapTopCam
             }
             //xend = 100;
 
+
+
+
             for (int i = searchy; i < yend; ++i)
             {
                 for (int j = searchx; j < xend; ++j)
@@ -822,7 +833,11 @@ namespace LapTopCam
                                 if(j== 99)
                                 {
                                 //찾기실패
-                                ++searchy;
+                                
+                 
+                              
+                                    ++searchy;
+                                
                                 return succxend;
                                 }
 
@@ -848,18 +863,52 @@ namespace LapTopCam
                                 {
                                     if (succxend == false)
                                     {
-                                        ++searchy;
+
+                                            ++searchy;
+                                     
                                     }
 
                                     return succxend;
                                 }
                             }
 
+                            
                             resultrect.Xpos = searchx;
                             resultrect.Ypos = setysearch(searchx, xend, searchy);
                             resultrect.Endxpos = xend;
                             resultrect.Endypos = i;
+                           
                             deterectList.Add(resultrect);
+
+
+                            while(topyblue)
+                            {
+                                bool dup = false;
+                                for (int k = 0; k < deterectList.Count; ++k)
+                                {
+                                    if (deterectList[k].Xpos == topybluestart && deterectList[k].Endxpos == topxend && deterectList[k].Endypos == i)
+                                    {
+
+                                        dup = true;
+                                        break;
+                                    }
+                                }
+
+                                detectRect deret = new detectRect();
+                                deret.Xpos = topybluestart;
+                                deret.Endxpos = topxend;
+                                deret.Ypos = setysearch(topybluestart, topxend, resultrect.Ypos);
+                                deret.Endypos = i;
+                
+
+                                if (dup == false)
+                                    deterectList.Add(deret);
+
+
+
+
+                            }
+
                            // ++searchy;
                             return succxend;
                         }
@@ -884,7 +933,10 @@ namespace LapTopCam
                 {
                     if(succxend == false)
                     {
-                        ++searchy;
+
+                      
+                                    ++searchy;
+                                
                     }
                     
                     return succxend;
@@ -896,6 +948,36 @@ namespace LapTopCam
             resultrect.Endxpos = xend;
             resultrect.Endypos = yend;
             deterectList.Add(resultrect);
+
+            while (topyblue)
+            {
+                bool dup = false;
+
+                for (int k = 0; k < deterectList.Count; ++k)
+                {
+                    if (deterectList[k].Xpos == topybluestart && deterectList[k].Endxpos == topxend && deterectList[k].Endypos == yend)
+                    {
+
+                        dup = true;
+                        break;
+                    }
+                }
+                detectRect deret = new detectRect();
+                deret.Xpos = topybluestart;
+                deret.Endxpos = topxend;
+                deret.Ypos = setysearch(topybluestart, topxend, resultrect.Ypos);
+                deret.Endypos = yend;
+      
+
+                if (dup == false)
+                    deterectList.Add(deret);
+
+
+
+
+            }
+
+
             if (succxend == false)
             {
                 ++searchy;
@@ -910,7 +992,7 @@ namespace LapTopCam
         {
             bool succ = false;
             int resulty = 0;
-            for(int i=0; i< endy; ++i)
+            for(int i=0; i< searchy; ++i)
             {
                 for(int j=xst; j<endx; ++j)
                 {
@@ -918,12 +1000,21 @@ namespace LapTopCam
                     {
                         resulty = i;
                         ++resulty;
+                        if(succ == false)
+                        {
+                            topybluestart = i;
+                            topxend = j;
+                            succ = true;
+                        }
+                        
+                        
                         break;
                     }
 
                 }
 
             }
+            topyblue = succ;
             return resulty;
         }
 
